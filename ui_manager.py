@@ -45,13 +45,12 @@ class UIManager:
         
         # 2. Clipboard Option (Windows only)
         st.markdown("""
-            <h3 id="clipboard-heading" tabindex="0">Option 2: Get Image from Clipboard (Windows only)</h3>
+            <h3 id="clipboard-heading" tabindex="0">Option 2: Get Image from Clipboard</h3>
         """, unsafe_allow_html=True)
         
         st.markdown("""
             <p class="clipboard-instruction" tabindex="0">
                 If you have copied an image to your clipboard, you can use this option to process it.
-                This feature only works on Windows.
             </p>
         """, unsafe_allow_html=True)
         
