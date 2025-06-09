@@ -1,0 +1,118 @@
+# -----[Screenshot]-----
+super + s
+    	mkdir -p ~/Pictures/Screenshots && scrot -s ~/Pictures/Screenshots/'%Y-%m-%d_%H-%M-%S.png' -e 'xclip -selection clipboard -t image/png -i $f'
+	#scrot -s ~/Pictures/Screenshots/"%b %d, %r.png" -e 'xclip -selection clipboard -t image/png -i "$f"'
+
+## -----[Tabs (Tabbed)]-----
+## Add current window to tabbed window
+#ctrl + alt + {Left,Down,Up,Right}
+#    tabc attach $(bspc query -N -n) {$(bspc query -N -n west),$(bspc query -N -n south),$(bspc query -N -n north),$(bspc query -N -n east)}
+## Create/remove from tabbed container
+#super + z 
+#    id=$(bspc query -N -n); \
+#    [[ "$(tabc printclass $id)" == "tabbed" ]] \
+#    && tabc detach $id \
+#    || tabc create $id 
+
+# -----[Launch Programs]-----
+# Launch terminal emulator
+super + Return
+	kitty -e fish
+# Launch program
+super + d
+	rofi -show drun
+
+# -----[BSPWM Hotkeys]-----
+# Balances windows (equal size)
+super + shift + d
+	bspc node @/ -B
+# Reload SXHKD's configuration
+super + Escape
+	pkill -USR1 -x sxhkd
+# Quit/restart BSPWM
+super + shift + r
+	bspc wm -r
+# Close & kill window
+super + q
+	bspc node -c
+# Toggle monocle layout
+super + m
+	bspc desktop -l next
+# Send newest marked node to newest preselected node
+super + y
+	bspc node newest.marked.local -n newest.!automatic.local
+# For flashfocus, flash the current window
+super + n
+    flash_window
+# Toggle floating window
+super + shift + space
+    if [ -z "$(bspc query -N -n focused.floating)" ]; then \
+        bspc node focused -t floating; \
+    else \
+        bspc node focused -t tiled; \
+    fi
+
+# -----[State/Flags]-----
+# Set window state
+super + {t,shift + t,f}
+	bspc node -t {tiled,pseudo_tiled,fullscreen}
+# Set node flags
+super + ctrl + {m,y}
+	bspc node -g {marked,sticky}
+
+# -----[Focus/Swap]-----
+# Focus/swap node in given direction
+super + {_,shift + }{Left,Down,Up,Right}
+	bspc node -{f,s} {west,south,north,east}
+# Focus the next/previous window in the current desktop
+#super + {_,shift + }c
+#	bspc node -f {next,prev}.local.!hidden.window
+# Cycle focus between windows (Alt+Tab behavior)
+super + Tab
+    	bspc node -f next.local.!hidden.window
+
+# Cycle focus in reverse (Shift+Tab)
+super + shift + Tab
+    	bspc node -f prev.local.!hidden.window
+
+# Focus adjacent desktop
+super + bracket{left,right}
+	bspc desktop -f {prev,next}.local
+# Focus/send-to given desktop
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} focused:^{1-9,10}
+
+# -----[Preselect]-----
+# Preselect direction
+super + ctrl + {Left,Down,Up,Right}
+	bspc node -p {west,south,north,east}
+# Cancel preselection
+super + ctrl + space
+	bspc node -p cancel
+
+# -----[Resize]-----
+# Expand window size
+super + alt + {Left,Down,Up,Right}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+# Contract window size
+super + alt + shift + {Left,Down,Up,Right}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# Increase brightness
+XF86MonBrightnessUp
+    brightnessctl set +10%
+
+# Decrease brightness
+XF86MonBrightnessDown
+    brightnessctl set 10%-
+XF86AudioRaiseVolume
+    pactl set-sink-volume @DEFAULT_SINK@ +5%
+
+XF86AudioLowerVolume
+    pactl set-sink-volume @DEFAULT_SINK@ -5%
+
+XF86AudioMute
+    pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+super + BackSpace
+    ~/.config/rofi/powermenu.sh
